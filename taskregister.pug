@@ -1,0 +1,829 @@
+doctype html
+html(lang="en")
+  head
+    title Calendaree || Task Register
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(href='/static/css/taskregister.css' rel='stylesheet' type='text/css')
+    link(href='/static/css/style.css' rel='stylesheet' type='text/css')
+    link(href=`/static/css/${orgcolor}.css` rel='stylesheet' type='text/css')
+    link(href='/static/image/calen2.jpg' rel='stylesheet' type='text/image')
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="images/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="images/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="icon" type="images/png" sizes="192x192" href="/images/favicon-192x192.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    body(onload="getlogoimageservice();")
+        div.container
+            div.content
+                div.header
+                    div.logo
+                        //-a(href="https://www.calendaree.com/")
+                        table(align="center") 
+                            tr 
+                                td(width="50%" style="text-align:left")
+                                    img(src="/static/image/Calendaree-logo-Original.png")
+                                td(align="center" style="text-align:left; width=100%; vertical-align: middle;")
+                                    div(id="logupload"  style="width:400px; height:80%; !important; margin-left:-70px;") 
+                                    //- div#showimg1
+                                td
+                                    <b>#{username}</b><br>
+                                    <a href="/1/menu" class="loginlink">Main</a>&nbsp;&nbsp;
+                                    <a href="/1/login" class="loginlink">Logout</a>
+                                    br
+                                    button.metal.linear(onclick='sendmessage1()') Support On  <i class="fa fa-whatsapp" style="font-size:24px;">
+                        div.loader#loader
+                            table(align='center') 
+                                tr(align='center') 
+                                    td(align='center')
+                                        | Update.....     
+                        div.loader#loader2
+                            table(align='center') 
+                                tr(align='center') 
+                                    td(align='center')
+                                        | Saving.....              
+                        div.loader#loader3
+                            table(align='center') 
+                                tr(align='center') 
+                                    td(align='center')
+                                        | Delete.....                                                            
+                        div(width="100%").loader#divusermsg
+                            table(width="100%" align='center' style="margin:0px; padding:0px;") 
+                                tr(width="100%" align='center' style="margin:0px; padding:0px;") 
+                                    td(align='center' style="width:100%; !important;")
+                                        div(width="100%" id="usermsg12" style="color:rgb(93, 194, 222)")
+                        div#taskregister 
+                            table(align="center")    
+                                if(admin==0 && started==0 && projectmanager==0 && contributor==0 && readonly==0)
+                                    tr 
+                                        td 
+                                            button(onclick ="subscribe();") Get Subscription   
+                        div#orgnibtn
+                            table(align="center")
+                                tr 
+                                    td 
+                                        if(admin==1 && started==0 && substatus==0)
+                                            button(onclick="orginfo();" class="mainbutton") <img src="/static/image/updateorganization.jpeg"  style="width:70px; "/> <br><p> Organization Info <br></p> 
+                        div#mainmenu 
+                            table(align="center")  
+                                    tr 
+                                        td 
+                                            if (admin == 1 && started == 1 && substatus == 1)
+                                                <img onclick="settinginfo();" src="/static/image/settings.jpeg" style="width:70px; "/> <br><p onclick="settinginfo();"> Settings</p>  
+                                            
+                                        td 
+                                            if ((admin == 1 && started == 1 && substatus == 1 ) || (admin == 0 && started == 0 && substatus == 1 && projectmanager ==1) || (admin == 0 && started == 0 && substatus == 1 && contributor ==1) || (admin == 0 && started == 0 && substatus == 1 && readonly ==1))
+                                                <img src="/static/image/task.png"  onclick="taskregisterpage();" style="width:70px; "/> <br><p onclick="taskregisterpage();"> Task Register </p>  
+                                    tr            
+                                        td 
+                                            if (admin == 1 && started == 1 && substatus == 1 )
+                                                <img src="/static/image/updateorganization.jpeg" onclick="updateorginfo();" style="width:70px; "/> <br><p onclick="updateorginfo();"> Update Organization <br> Info</p>
+                                            
+                                        td 
+                                            if (admin == 1 && started == 1 && substatus == 1 )
+                                                <img src="/static/image/Account status.jpeg" onclick="acountstatus();"  style="width:70px; "/> <br><p onclick="acountstatus();"> Account Status</p>
+                                    if ((contributor ===1 && substatus == 0) || (projectmanager === 1 && substatus == 0) || (readonly ===1 && substatus == 0))
+                                        tr 
+                                            td 
+                                                h1 You have reached the end of your subscription for the Task Register  Module
+                                        tr 
+                                            td 
+                                                h1 Contact Your Respective Organization
+                                    if admin === 1 && substatus == 0 &&  started == 1
+                                        tr 
+                                            td 
+                                                h1 You have reached the end of your subscription for the Task Register Module
+                                        tr
+                                            td 
+                                                button.metal.linear(onclick='sendmessage2()') Sales On <i class="fa fa-whatsapp" style="font-size:24px;">
+                        div.model12#org
+                            table(align="center")
+                                        tr  
+                                            td
+                                                h1 Organization Information 
+                                            //- td
+                                            //-     button(onclick="cancelorgdb();" style="background-color:#E74C3C; text-align: justify;") X 
+
+                                        tr
+                                            td
+                                                label Organization Name
+                                                input(type='text' id='orgname' placeholder='Organization Name' maxlength='40' size='40' required)
+                                        tr
+                                            td
+                                                label Address 
+                                                input(type='text' id='orgaddress' placeholder='Address' maxlength='40' size='40' required)        
+                                        tr
+                                            td
+                                                label Address
+                                                input(type='text' id='orgaddress2' placeholder='Address' maxlength='40' size='40' required)        
+                                        tr
+                                            td
+                                                label City
+                                                input(type='text' id='orgcity' placeholder='City' maxlength='40' size='40' required)
+                                        tr
+                                            td
+                                                label State
+                                                input(type='text' id='orgstate' placeholder='State' maxlength='40' size='40' required)
+                                        tr
+                                            td
+                                                label Email
+                                                input(type='email' id='orgemail' placeholder='Email' maxlength='40' size='40' required)
+                                        tr
+                                            td
+                                                label Mobile
+                                                input(type='text' id='phoneno' placeholder='Mobile' maxlength='10' size='40' required)
+                            br
+                            table(align="center")
+                                        tr(align="center")
+                                            td 
+                                                button(onclick='saveorginfo();' width='95px') Save Organazation
+                                            td  
+                                                button(onclick="cancelorgdb();" ) X   
+                                                
+                        div.model12#setting
+                            table(align="center")
+                                tr(align="center") 
+                                    td(align="center") 
+                                        h1 Settings
+                                    td 
+                                        button(onclick="closesetting();") X    
+                            table(align="center" class="tblbackcolor") 
+                                tr(align="center") 
+                                    td(align="center") 
+                                    
+                                        table(align="center") 
+                                            tr(align="center") 
+                                                td(align="center") 
+                                                    h3(style="color: black; font-size: 20px;") Manage Status                              
+                                        table.tblclass(align="center") 
+                                                tr.tblclass(style="margin:0px; padding:0px;") 
+                                                    td.tblclass 
+                                                        input(type="text" id="newstatus" placeholder="Status" maxlength="15" size="5")
+                                                    td.tblclass 
+                                                        button(id="addmsbtn" onclick="savestatus();"  class="settingadd" ) Add
+                                                tr.tblclass 
+                                                    td.tblclass 
+                                                        table 
+                                                            tr 
+                                                                td 
+                                                                    label Status
+                                                                    br
+                                                                    select(name="status" id="allstatus" size="10"  style="width:160px;")
+                                                    td 
+                                                        table 
+                                                            tr 
+                                                                td.tblclass 
+                                                                    button(id="status1" onclick="addstatus1();"  class="settingadd" ) Add
+                                                            tr    
+                                                                td.tblclass 
+                                                                    button(id="delbtnc" onclick="deletestatus();"  class="settingadd1" ) Delete 
+                                                    td.tblclass
+                                                        table 
+                                                            tr 
+                                                                td  
+                                                                    label Selected Status
+                                                                    br
+                                                                    select(name="selstatus" id="selectestatus" size="10" style="width:160px; margin-left:10px;")
+                                                    //- td.tblclass 
+                                                    //-     table
+                                                    //-         tr
+                                                    //-             td
+                                                    //-                 button( id="statussortup1" onclick="statusshortup();" ) <img src="/static/image/up-arrow.png" style="height:20px; width:15px;"/>  
+                                                    //-         tr 
+                                                    //-             td 
+                                                    //-                 button(onclick="statusshortdown();" id="statusshortdn1") <img src="/static/image/down-arrow.png" style="height:20px; width:15px;"/>  
+                        div.model12#acountstatusinfo
+                            table(class="tblbackcolor" align="center" width="50%")
+                                tr 
+                                    td 
+                                        table(align="center")
+                                            tr(align="center") 
+                                                td(align="center") 
+                                                    h1 Account Status
+                                                td 
+                                                    button(onclick="cancelaccountstatuspage();" ) X
+                                        table(align="center")
+                                            tr(align="center")
+                                                td(align="center")
+                                                        br
+                                                        table(align="center")
+                                                            tr(align="center")
+                                                                td.tblclass 
+                                                                    label Account state
+                                                                    input(type='text' maxtlength='10' size='10' id='state' disabled='disabled')
+                                                                td.tblclass 
+                                                                    label Day's left
+                                                                    input(type='text' maxlength='10' size='10' id='valid' disabled='disabled')
+                                                        table 
+                                                            tr.tblclass
+                                                                td.tblclass 
+                                                                    label Start Date 
+                                                                    input(type='text' maxtlength='10' size='10' id='stdate' disabled='disabled') 
+                                                                td.tblclass 
+                                                                    label End Date 
+                                                                    input(type='text' maxtlength='10' size='10' id='eddate' disabled='disabled')
+                                                            tr.tblclass    
+                                                                td.tblclass 
+                                                                    label Quota
+                                                                    input(type='text' maxtlength='10' size='10' id='quota' disabled='disabled')     
+                                                                td.tblclass 
+                                                                    label Used Quota
+                                                                    input(type='text' maxtlength='10' size='10' id='usedquota' disabled='disabled')             
+                        div.model12#updateorgnization
+                            table(class="tblbackcolor" align="center" width="50%") 
+                                tr 
+                                    td
+                                        table(width="30%" cellspacing="0" cellpadding="0" align ='center')
+                                            tr(align="center")  
+                                                td(align="center") 
+                                                    h1 Update Organization 
+                                                td  
+                                                    button(onclick="cancelbutton1();" ) X
+                                        table(align="center" cellspacing="0" cellpadding="0")
+                                            tr
+                                                td
+                                                    label Organization Name
+                                                    input(type='text' id='orgname1' placeholder='Organization Name' maxlength='40' size='40' required)
+                                            tr
+                                                td
+                                                    label Address 
+                                                    input(type='text' id='uaddress' placeholder='Address' maxlength='40' size='40' required)        
+                                            tr
+                                                td
+                                                    label Address 2
+                                                    input(type='text' id='uaddress2' placeholder='Address' maxlength='40' size='40' required)        
+                                            tr
+                                                td
+                                                    label City
+                                                    input(type='text' id='ucity' placeholder='City' maxlength='40' size='40' required)
+                                            tr
+                                                td
+                                                    label State
+                                                    input(type='text' id='ustate' placeholder='State' maxlength='40' size='40' required)
+                                            tr
+                                                td
+                                                    label Email
+                                                    input(type='text' id='uemail' placeholder='Email' maxlength='40' size='40' required)
+                                            tr
+                                                td
+                                                    label Mobile
+                                                    input(type='text' id='phoneno1' placeholder='Mobile' maxlength='10' size='10' required)
+                                        br
+                                        table(align="center")    
+                                            tr
+                                                td 
+                                                    button(onclick='updateorg()' width='95px') Save Organization
+
+                                        table(align="center") 
+                                            tr.tblflex
+                                                td
+                                                    select(type="text" id="csscolor" required style="width:150px;")   
+                                                td(align="center")
+                                                    button(onclick="orgcolortaskregister();" ) Add Color   
+                                        table(align="center") 
+                                            tr
+                                                
+                                                td(colspan="2")
+                                                    input(type="file" id="uploadlogo1" placeholder=""  )   
+                                                td
+                                                    button(onclick="logoupload1();") Logo upload  
+                                            tr  
+                                                td                                             
+                        div.model12#taskpage
+                            table(width="100%")   
+                                tr(align="center") 
+                                td
+                                    table
+                                    tr 
+                                            td 
+                                                select(id="showprojectname"  required style="width: 230px; height: 33px;") 
+                                            td 
+                                                input(id='taskid' type="hiddenbox" class="displaytaskid") 
+                                            td 
+                                                input(id='subjectid' type="hiddenbox5" class="displaytaskid") 
+                                            td 
+                                                input(id='lastchattime' type="hiddenbox6" class="displaytaskid")
+                                            td 
+                                                input(id='taskidk' type="hiddenbox1" class="displaytaskid") 
+                                            td 
+                                                input(id='logid' type="hiddenbox2" class="displaytaskid")        
+                                            td(title="Show  Project Task") 
+                                                if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 )||(admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                                    <img onclick="openprojectinfo();" src="/static/image/project.png" style="height:37px; width:35px;"/>
+                                            td(title="Show Kanban Board")
+                                                if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 )||(admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                                    <img onclick="kanbanboard();"  src="/static/image/backlog.png" style="height:37px; width:35px;"/>
+                                            td(title="Show Chat Board")
+                                                if((admin==1 && started==1)||(admin==0 && started==0 && projectmanager==1 )||(admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                                    <img onclick="chatboard();" src="/static/image/chat.png" style="height:37px; width:35px;"/> 
+                                            td(title="Add New Project")
+                                                if((admin==1 && started==1))
+                                                    <img onclick="newprojectinfo();" src="/static/image/newproject.png" style="height:37px; width:35px;"/> 
+                                            td(title="Delete Project")
+                                                if((admin==1 && started==1))  
+                                                    <img onclick="deleteprojectinfo();" src="/static/image/trash.png" style="height:37px; width:35px;"/>
+                                            td
+                                                button(onclick="closemainpage1();" )  X 
+                                            //- td 
+                                            //-     button(onclick="taskregistermainpageclose();" style="background-color:#d6e0f5;"  class="bgcol")  X
+                                            td(style="width:600px")     
+                                            td(style="text-align: center;" class="dtime") 
+                                                input(type="text" id="liveDateTime" readonly class="ddate")    
+
+                            hr
+                        div.model12#staffdialog
+                            table 
+                                    tr 
+                                        td
+                                            <dialog id="staffavdialog" class="digclass" style="border-radius: 15px; width: 650px; height: 470px; overflow: auto;"  >
+                                                table(align="center") 
+                                                    tr(align="center") 
+                                                        td(align="center")
+                                                            table(class="tblbackcolor") 
+                                                                tr 
+                                                                    td
+                                                                        table(align="center")
+                                                                            tr(align="center")    
+                                                                                td(align="center")
+                                                                                    h1 Manage Staff  
+                                                                                td(class="aligreight")     
+                                                                                    button(onclick="closestaffbtn();") X    
+                                                                        table.tblclass(align="center")
+                                                                            tr.tblclass(align="center") 
+                                                                                td.tblclass(align="center")
+                                                                                    label Mobile Number
+                                                                                    br
+                                                                                    input(type="text" id="usermobilenumber" placeholder="mobile number" style="width:150px;" maxsize="15" hight="5")
+                                                                                td 
+                                                                                    button(onclick="searchmn();" style='margin-top: 25px ;') Search 
+                                                                        br
+                                                                        table.tblclass           
+                                                                            tr.tblclass 
+                                                                                td.tblclass
+                                                                                    label Name
+                                                                                    br   
+                                                                                    input(type="text" id="username1" placeholder="username" maxsize="10" hight="5" style="width:150px;") 
+                                                                                    //- table.tblclass             
+                                                                                    //-     tr.tblclass 
+                                                                                td.tblclass
+                                                                                    label Email
+                                                                                    br    
+                                                                                    input(type="text" id="useremail1" placeholder="email" maxsize="10" hight="5" style="width:150px;")                  
+                                                                                        //- table.tblclass(align="center") 
+                                                                                        //-     tr.tblclass(align="center") 
+                                                                                td.tblclass
+                                                                                    label Position
+                                                                                    br
+                                                                                    select( type="text"  id="addposition" placeholder='Position' required style="width:150px;")
+                                                                                        option(value="select") Select Position
+                                                                                        option(value="Project Manager") Project Manager 
+                                                                                        option(value="Contributor") Contributor
+                                                                                        option(value="Read Only") Read Only 
+                                                                                td        
+                                                                        br
+                                                                        table(align="center")     
+                                                                            tr(align="center") 
+                                                                                td(align="center")
+                                                                                    button(onclick="savepositioninformation();" style="text-align: justify;") Save
+                                                                
+                                                    tr
+                                                        br
+                                                        table(width="100%")
+                                                            tr
+                                                                td 
+                                                                    h4 Staff Report 
+                                                            tr        
+                                                                td             
+                                                                    div(width='80%' )#staffreport1
+                            </dialog>
+                                        //- new button dialog box           
+                        div.model12#chatgroupdiv
+                            table(align="center")
+                                tr(align="center")
+                                    td(align="center")
+                                        <dialog id="chatgroupdialog" class="digclass" style="border-radius: 15px; width: 650px; height: 470px; overflow: auto;" >
+                                            table 
+                                                tr 
+                                                    td
+                                                        table(class="tblbackcolor" style="width: 600px;") 
+                                                            tr 
+                                                                td
+                                                                    table(align="center" )
+                                                                        tr(align="center")
+                                                                            td 
+                                                                                h1 Manage Group 
+                                                                            td(class="aligreight")     
+                                                                                button(onclick="closechatgroupdialog();" ) X    
+                                                                    table(align="center")
+                                                                        tr(align="center")
+                                                                            td.tblclass
+                                                                                label Group Name
+                                                                                br
+                                                                                input(type="text" id="subjectname" placeholder='Group' style="width:190px; height:25px;" maxsize="15" hight="5px" required)
+                                                                            td.tblclass 
+                                                                                button(onclick="subjectnamesave();" style="height:30px; margin-top: 15px ;") New Group
+                                                                
+                                                                        tr(align="center")
+                                                                            td.tblclass
+                                                                                label Group
+                                                                                br 
+                                                                                select(id="subjectnamed" required style="width:190px;")          
+                                                                            td.tblclass 
+                                                                                button(onclick='showrepotrongroup();' style='margin-top: 15px ;') Show Group         
+                                                                        tr(align="center") 
+                                                                            td.tblclass 
+                                                                                label Add Member
+                                                                                br  
+                                                                                select(id="addmember" required style="width:190px;")
+                                                                            td(align="center") 
+                                                                                button(onclick="savegroup();" style='margin-top: 15px ;') Add Member   
+                                                                        
+                                            table(align="center" style='width="100%')
+                                                tr 
+                                                    td 
+                                                        h4 Group Report
+                                                tr(align="center") 
+                                                    td(align="center")             
+                                                        br
+                                                        div(width='80%' )#showgroupreport                                                                               
+                                                    </dialog>
+                        div.model12#dialogbox
+                            table(align="center" ) 
+                                    tr 
+                                        td
+                                            <dialog id="favdialog" style="border-radius: 15px; width: 320px; height: 420px;" class="digclass">
+                                                table
+                                                    tr 
+                                                        td(class='tblbackcolor') 
+                                                            table(align="center" )
+                                                                tr(align="center")  
+                                                                    td(style="text-align:right;" align="center")  
+                                                                        h1(style="text-align:center;" align="center") Project 
+                                                                    td(class="aligreight")     
+                                                                        button(onclick="closedialogbox();") X    
+                                                            table.tblclass(align="center") 
+                                                                tr.tblclass  
+                                                                    td.tblclass(align="center")
+                                                                        label Project Name 
+                                                                        br  
+                                                                        input(type="text" placeholder="Project Name" id="projectname"   style="width:260px;")
+                                                            table.tblclass(align="center")    
+                                                                tr.tblclass(align="center")         
+                                                                    td.tblclass(align="center")
+                                                                        label Description 
+                                                                        br
+                                                                        textarea(type="text" id="projectdescriptioninfo" placeholder="Task Description" style="width: 260px; height: 140px;" )  
+                                                            table(align="center")
+                                                                tr 
+                                                                    td 
+                                                                        button(onclick="savedialogbox();") Save
+                                                                        //-   <img src="/static/image/save-data.png" style="height:35px; width:30px;"/>
+
+                                                            div#dialogboxclose
+                                            </dialog> 
+                                        
+                        div.mode12#updateinfodig 
+                            table(align="center")
+                                tr(align="center")
+                                    td(align="center")
+                                        <dialog id="updatefavdialog" class="digclass"  style="border-radius: 15px; width: 390px; height: 560px;" >
+                                            table 
+                                                tr 
+                                                    td(class='tblbackcolor')
+                                                        table(align="center") 
+                                                            tr(align="center")
+                                                                td(align="center") 
+                                                                    h1 Task Info Update 
+                                                                td.tblclass(align="center")     
+                                                                    button(onclick="infoupdateclosebtn();") X    
+                                                        table(align="center")
+                                                            tr(align="center")
+                                                                td(align="center" )             
+                                                                        div#updateinformation            
+                                                                            table.tblclass(align="center")
+                                                                                tr.tblclass(align="center")
+                                                                                    td.tblclass(align="center")       
+                                                                                tr.tblclass       
+                                                                                    td.tblclass
+                                                                                        label Update Task Name
+                                                                                        br 
+                                                                                        input(type="text"  id="addtaskname1" placeholder='Add Task' required)
+                                                                                tr.tblclass 
+                                                                                    td.tblclass
+                                                                                        label Update task description
+                                                                                        br 
+                                                                                        textarea(id="addtaskdescription1" placeholder="Description" style="width: 260px; height: 140px;" )        
+                                                                                tr.tblclass
+                                                                                    table(align="center")
+                                                                                        tr(align="center")
+                                                                                            label Task Status
+                                                                                            br 
+                                                                                            input(type="text", id="retrivstatus") 
+                                                                                        tr(style='height: 0px;') 
+                                                                                        tr(align="center") 
+                                                                                            td(align="center")
+                                                                                                if((admin==1 && started==1) || (admin==0 && started==0 && projectmanager==1 )) 
+                                                                                                    input(type="radio"  name="statusGroup" value="Started") 
+                                                                                                    label( for="css") Started
+                                                                                            td(align="center")
+                                                                                                if((admin==1 && started==1) || (admin==0 && started==0 && projectmanager==1 )) 
+                                                                                                    input(type="radio" name="statusGroup"  value="In Progress")
+                                                                                                    label( for="css") In Progress
+                                                                                            td(align="center")
+                                                                                                if((admin==1 && started==1) || (admin==0 && started==0 && projectmanager==1 )) 
+                                                                                                    input(type="radio" name="statusGroup"  value="On Hold")
+                                                                                                    label( for="css" ) On Hold  
+                                                                                    table(align="center")     
+                                                                                        tr(align="center")    
+                                                                                            td(align="center") 
+                                                                                                if((admin==1 && started==1) || (admin==0 && started==0 && projectmanager==1 ))
+                                                                                                    input(type="radio" name="statusGroup" value="Cancelled") 
+                                                                                                    label(for="cancelledtask") Cancelled
+                                                                                            td(align="center")
+                                                                                                if((admin==1 && started==1) || (admin==0 && started==0 && projectmanager==1 ))
+                                                                                                    input(type="radio" name="statusGroup" value="Completed") 
+                                                                                                    label( for="css") Completed
+                                                                                            td(style='width: 50px;')       
+                                                                                tr(align="center")
+                                                                                            td(align="center") 
+                                                                                                button(onclick="updateinfo();" id="updatetask1" ) Update  
+                                                                                tr 
+                                                                                    td                                            
+                                        <dialog>
+                        div.mode12#insertinfo
+                            table(align="center")
+                                tr(align="center")
+                                    td(align="center")
+                                        <dialog id="insertfavdialog" class="digclass"  style="border-radius: 15px; width: 460px; height: 600px;"  >
+                                            table 
+                                                tr 
+                                                    td(class='tblbackcolor')
+                                                        table(align="center")
+                                                            tr(align="center")
+                                                                td(align="center")
+                                                                    h1 Insert Sub Task
+                                                                td.tblclass(align="center" )     
+                                                                    button(onclick="infoinsertclosebtn();") X    
+                                                        table(align="center")
+                                                            tr(align="center")
+                                                                td(align="center")             
+                                                                        div#insertinformation            
+                                                                            table.tblclass(align="center") 
+                                                                                tr.tblclass(align="center") 
+                                                                                    td.tblclass(align="center")
+                                                                                        label Add task
+                                                                                        br 
+                                                                                        input(type="text"  id="addtasknamei" placeholder='Add Task' style="width260px;" maxsize="15" hight="5px" required)
+                                                                                tr.tblclass(align="center") 
+                                                                                    td.tblclass(align="center") 
+                                                                                        label Description
+                                                                                        br
+                                                                                        textarea(id="addtaskdescriptioni" placeholder="Description" style="height: 140px; width: 260px;")         
+                                                                            table(align="center")    
+                                                                                tr.tblclass 
+                                                                                    td.tblclass
+                                                                                        label Start 
+                                                                                        br
+                                                                                        input(type="datetime-local" id="startdatei" placeholder='start date' required style="width:180px;")
+                                                                                        //-   tr.tblclass 
+                                                                                    td.tblclass
+                                                                                        label Finish 
+                                                                                        br
+                                                                                        input(type="datetime-local" id="enddatei" placeholder='enddate'  required style="width:180px;")
+                                                                            table(align="center")    
+                                                                                tr.tblclass(align="center") 
+                                                                                    td.tblclass(align="center")
+                                                                                        label Status
+                                                                                        br 
+                                                                                        select(type="text"  id="addtaskstatusi" placeholder='Task Status' required style="width:170px;")
+                                                                                                
+                                                                                    //- td 
+                                                                                    //-     input(id="hiddenbox")             
+                                                                            br
+                                                                            table(align="center") 
+                                                                                tr 
+                                                                                    td 
+                                                                                        button( onclick="saveaddtaski();") Save
+                                        <dialog>
+                        div.model12#insertloginfo
+                            table(align="center") 
+                                tr 
+                                    td
+                                        <dialog id="adddlog" style="border-radius: 15px; width: 300px; height: 310px;" class="digclass">
+                                            table 
+                                                tr 
+                                                    td(class='tblbackcolor')
+                                                        table(align="center")
+                                                            tr(align="center")
+                                                                td(align="center")
+                                                                    h1 Add Log
+                                                                td.tblclass(align="center")     
+                                                                    button(onclick="addlogclosebtn();" ) X     
+                                                        table(align="center")
+                                                            tr(align="center")
+                                                                td(align="center")             
+                                                                        div#addloginformation            
+                                                        table(align="center") 
+                                                            tr 
+                                                                td 
+                                                                    label Log Text
+                                                                    br 
+                                                                    textarea(id="addlogtext" placeholder="logtext" style="width: 240px; height: 130px;")
+                                                        table(align="center") 
+                                                            tr 
+                                                                td 
+                                                                    button(onclick="saveloginfo();") Save
+                                        <dialog>
+                        div.model12#staffdialogs
+                            table(align="center") 
+                                    tr 
+                                        td
+                                            <dialog id="showusers"  class="digclass" style='border-radius: 15px; text-align: center; width: 330px; height: 150px; overflow:auto;' >
+                                                table(align="center") 
+                                                    tr    
+                                                        td(class="fr1" style="vertical-align: top;") 
+                                                        td
+                                                            div#showstaffselectedgroup
+                                                        td.tblclass(align="center" style="vertical-align: top;")     
+                                                            button(onclick="closedialogboxuserinfodialog();" ) X    
+                                                div#dialogboxclosefile
+                                            <dialog>
+                        div.model12#fileadd
+                            table(align="center") 
+                                    tr 
+                                        td
+                                            <dialog id="favdialogfile" class="digclass" style ="border-radius: 15px; text-align: center; width: 300px; height: 150px;">
+                                                table 
+                                                    tr 
+                                                        td(class='tblbackcolor')
+                                                            table(align="center") 
+                                                                tr    
+                                                                    td(class="fr1" style="vertical-align: top;") 
+                                                                    td.tblclass(align="center" style="vertical-align: top;")     
+                                                                        button(onclick="closedialogboxfile();") X
+                                                                tr
+                                                                div#fileaddinformation
+                                                                    table.tblclass(align="center") 
+                                                                        tr.tblclass(align="center")  
+                                                                            table(align="center") 
+                                                                                tr(align="center") 
+                                                                                    td(align="center" )
+                                                                                            input(type="file" id="uploadfile2" placeholder="choose file")  
+                                                                            br
+                                                                            table(align="center")    
+                                                                                tr(align="center")    
+                                                                                    td(align="center")
+                                                                                        button(onclick="filesave1();") Add File
+                                                                                                        
+                                                                    
+                                                            div#dialogboxclosefile
+                                            <dialog>
+                        div.model12#aadtaskdialogbox
+                            table.tblclass(align="center") 
+                                tr.tblclass 
+                                    td.tblclass
+                                        <dialog id="adddtask" class="digclass" style="height: 570px; border-radius: 15px; width: 460px;"  >
+                                            table 
+                                                tr 
+                                                    td(class='tblbackcolor')
+                                                        table.tblclass(align="center" )
+                                                            tr.tblclass(align="center")
+                                                                td.tblclass(align="center" style="vertical-align: top;" ) 
+                                                                    h1 Add Task 
+                                                                td.tblclass(align="center" )     
+                                                                        button(onclick="closeaddtask();") X        
+                                                        table.tblclass(align="center")    
+                                                            tr.tblclass(align="center")
+                                                                td.tblclass(align="center")
+                                                                    label Task Name
+                                                                    br
+                                                                    input(type="text"  id="addtaskname" placeholder='Task Name' required style="width:260px;")
+                                                            tr.tblclass(align="center") 
+                                                                td.tblclass(align="center") 
+                                                                    label Description
+                                                                    br
+                                                                    textarea(id="addtaskdescription" style="width:260px; height: 110px;")         
+                                                        
+                                                        table.tblclass(align="center")     
+                                                            tr.tblclass 
+                                                                td.tblclass
+                                                                    label Start
+                                                                    br
+                                                                    input(type="datetime-local" id="startdate" class="" required style="width:190px;")
+                                                                td.tblclass
+                                                                    label Finish
+                                                                    br 
+                                                                    input(type="datetime-local" id="enddate" required style="width:190px;")
+                                                        br
+                                                        table.tblclass(align="center")     
+                                                            tr.tblclass(align="center") 
+                                                                td.tblclass(align="center") 
+                                                                    lable Select Status
+                                                                    br 
+                                                                    select( type="textbox"  id="addtaskstatus" placeholder='Task Status' required style="width:170px;")
+                                                                                
+                                                        br
+                                                        table(align="center") 
+                                                            tr 
+                                                                td 
+                                                                    button(onclick="saveaddtask();" ) Save
+                                                        div#dialogboxclose
+                                        </dialog> 
+                        //- show tables in open ,update ,insert,delete,attach file,lo
+                        div.model12#showchat 
+                            table(cellpadding="0" cellspacing="0" style='width: 100%;height: 100%;' class="ttable2") 
+                                tr
+                                    td(class="mar" vertical-align="top"  class="td1")  
+                                        p(id="selectedProject1" class="prj1")       
+                                    td(align="center" vertical-align="top"   class="td1" title="Manage Staff")
+                                        if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ))
+                                            <img onclick="addstaff();" src="/static/image/team-development.png" style="height:37px; width:35px;"/>
+                                    td(align="center" vertical-align="top"   class="td1" title="Chat Group")
+                                        if((admin==1 && started==1) || (admin==0 && started==0 && projectmanager==1 ))
+                                            <img onclick="chatgroup();" src="/static/image/chatgroup.png" style="height:37px; width:35px;"/>          
+                                tr(aligin="center")
+                                    if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ) || (admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                    td(aligin="center" vertical-align="top" )
+                                        table(cellpadding="0" cellspacing="0"  class="ttable3") 
+                                            tr 
+                                                td(vertical-align="top")
+                                                    p(vertical-align="top")
+                                                        table(cellpadding="0" cellspacing="0" style='width: 100%;height:100%;') 
+                                                            tr
+                                                                td(vertical-align="top" class="titalsubject"  style='height: 10px !important;') <img src="/static/image/chatgroup1.png" style="height:37px; width:35px;"/>
+                                                                    if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ) || (admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                                                td(vertical-align="top" colspan='2' class="titalsubject" id='showselectgroup'  style='height: 10px !important;') 
+                                                                    if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ) || (admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                                                td(vertical-align="top" title="Show Member")
+                                                                    if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ) || (admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                                                        <img src='/static/image/team-development.png' onclick='showusers2()' class="userslisticon"  style='height:37px; width:35px;'/>
+                                                            tr                                                                                                                                                                                                            
+                                                                td(vertical-align="top")
+                                                                    if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ) || (admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                                                        p(vertical-align="top" id='groupnamelist') 
+                                                                td(colspan="3" vertical-align="top")
+                                                                    if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ) || (admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                                                        p(vertical-align="top" id='showchat1' class="chattingbg" style='width: 400px;')   
+                                                            tr 
+                                                                p(vertical-align="top")
+                                                                    td(style='width: 280px;') 
+                                                                    td(vertical-align="top")
+                                                                        if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ) || (admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                                                            input(type="text" id='messageinfo' placeholder='Type a message')
+                                                                td(vertical-align="top") 
+                                                                    if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ) || (admin==0 && started==0 && contributor==1 )||(admin==0 && started==0 && readonly==1 ))
+                                                                        <img src="/static/image/send.png" onclick="savechat();"  class="sendmsg"  style="height:37px; width:35px;"/> 
+
+                        div.model12#taskregistermainpage      
+                            table(cellspacing="0" cellpadding="0" class="mar" id="taskregistermainpage2" style="vertical-align: top;" )          
+                                tr(class="mar" id='hideinf') 
+                                    td(class="mar" vertical-align="top"  class="td1")  
+                                        p(id="selectedProject" class="prj1")       
+                                    td(align="center" class="mar" vertical-align="top"  class="td1" title="New Task Insert")
+                                        if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ))
+                                            <img onclick="addtaskbutton();" src="/static/image/edit.png" style="height:37px; width:35px;"/>
+                                    td(align="center" vertical-align="top"   class="td1" title="Manage Staff")
+                                        if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ))
+                                            <img onclick="addstaff();" src="/static/image/staffmanagement.png" style="height:37px; width:35px;"/>
+                                    td(align="center" vertical-align="top"   class="td1" title="Chat Groups")
+                                        if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1))
+                                            <img onclick="chatgroup();" src="/static/image/chatgroup.png" style="height:37px; width:35px;"/>          
+                                tr(align-text="top" class="mar")
+                                    table(width="100px" cellspacing="0" cellpadding="0"   style="vertical-align: top;" class="ttable1")
+                                        tr(class="mar")
+                                            td(class="hidden2-box") 
+                                            td(align="center" vertical-align="top" class="td1" )             
+                                                div(class="hidden1-box" style="text-align:top;")
+                                                div(class="mar")#showkanbanboarddata
+                                                div(class="mar")#showprojectdata
+                                            td(align="center" vertical-align="top" class="td1")
+                                                table(class="mar"  style="vertical-align: top;"  id="myButton")
+                                                    tr(align="center")
+                                                        td(align="center" vertical-align="top"  class="td1" title="Sub Task Insert ")
+                                                            if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 )||(admin==0 && started==0 && contributor==1 ))
+                                                                <img src='/static/image/edit.png' onclick=insertaskinfo(); id="kb1"  style="height:28px; width:28px;"/>    
+                                                        td(align="center" vertical-align="top" class="td1" title="Update Task Info")
+                                                            if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 )||(admin==0 && started==0 && contributor==1 ))
+                                                                <img src='/static/image/update.png' onclick=updatetaskin(); id="kb"  style="height:28px; width:28px;"/>
+                                                        td(align="center" vertical-align="top"  class="td1" title="Add Task Log")
+                                                            if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 )||(admin==0 && started==0 && contributor==1 ))   
+                                                                <img src='/static/image/log-file.png' onclick="addloginfo1();" id="kb2" style="height:28px; width:28px;"/> 
+                                                        td(align="center" vertical-align="top"  class="td1" title="Add File")
+                                                            if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 )||(admin==0 && started==0 && contributor==1 ))   
+                                                                <img src='/static/image/file.png' onclick="addfileinfo();" id="kb4"  style="height:28px; width:28px;"/>
+                                                        td(align="center" vertical-align="top"  class="td1" title="Delete Task")
+                                                            if((admin==1 && started==1) ||(admin==0 && started==0 && projectmanager==1 ))
+                                                                <img src='/static/image/trash.png' onclick="deletetaskinfo1();" id="kb3"   style="height:28px; width:28px;"/>                  
+                                                table(width="100px" cellspacing="0" cellpadding="0"  style="vertical-align: top;")    
+                                                    tr(class="mar")
+                                                        td(vertical-align="top"  class="td1")
+                                                            div#desshowinformation 
+                                                table(width="100px" cellspacing="0" cellpadding="0"  style="vertical-align: top;")    
+                                                    tr(align="center" id="logshowinfo" class="mar") 
+                                                        td(vertical-align="top"  class="td1") 
+                                                            div#logshowinformation 
+                                                                td(vertical-align="top"  class="td1")
+                                                                    div(class="hidden1-box1")                                                                    
+    block script  
+    script(src="/static/js/taskregister.js") 
+    script(type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js")
